@@ -6,10 +6,10 @@ temporada = "2022-2023"
 
 fbref = FBref(leagues=[liga], seasons=[temporada])
 
-# Pegar dados de jogadores por partida (é o método disponível)
+# Pegar dados de jogadores por partida 
 df_players = fbref.read_player_match_stats()
 
 print(df_players.columns)
 print(df_players.head())
 
-# Depois você pode filtrar, salvar, etc.
+

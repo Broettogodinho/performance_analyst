@@ -70,13 +70,13 @@ pasta_base.mkdir(exist_ok=True)
 
 # Início da coleta
 for liga in ligas:
-    print(f"\n📊 Iniciando coleta para a liga: {liga}")
+    print(f"\n Iniciando coleta para a liga: {liga}")
     pasta_liga = pasta_base / liga
     pasta_liga.mkdir(parents=True, exist_ok=True)
 
     for temporada in temporadas:
         try:
-            print(f"  📥 Temporada: {temporada}")
+            print(f" Temporada: {temporada}")
             fbref = FBref(leagues=liga, seasons=temporada)
             df = fbref.read_team_season_stats(stat_type='standard')
 
@@ -94,11 +94,11 @@ for liga in ligas:
             # Salvar CSV
             caminho_arquivo = pasta_liga / f"{temporada}.csv"
             df_filtrado.to_csv(caminho_arquivo, index=False, encoding="utf-8-sig")
-            print(f"    ✅ Dados salvos em: {caminho_arquivo}")
+            print(f"  Dados salvos em: {caminho_arquivo}")
 
         except Exception as e:
             msg = f"Erro ao coletar dados da temporada {temporada} da liga {liga}: {e}"
-            print(f"    ❌ {msg}")
+            print(f"  {msg}")
             logging.error(msg)
 
-print("\n✅ Coleta finalizada para todas as ligas.")
+print("\n Coleta finalizada para todas as ligas.")
