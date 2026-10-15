@@ -1,0 +1,8 @@
+{"competition":{"code":"BSA"},"matches":[
+ {"id":1001,"utcDate":"2024-04-13T19:00:00Z","matchday":1,"stage":"REGULAR_SEASON","homeTeam":{"name":"SC Internacional"},"awayTeam":{"name":"EC Bahia"},
+  "score":{"fullTime":{"home":2,"away":1},"halfTime":{"home":1,"away":0}},"referees":[{"name":"Fulano","type":"REFEREE"}]},
+ {"id":1002,"utcDate":"2024-04-14T00:30:00Z","matchday":1,"stage":"REGULAR_SEASON","homeTeam":{"name":"CR Flamengo"},"awayTeam":{"name":"AC Goianiense"},
+  "score":{"fullTime":{"home":2,"away":0},"halfTime":{"home":1,"away":0}},"referees":[]},
+ {"id":1003,"utcDate":"2024-12-08T19:00:00Z","matchday":38,"stage":"REGULAR_SEASON","homeTeam":{"name":"Botafogo FR"},"awayTeam":{"name":"São Paulo FC"},
+  "score":{"fullTime":{"home":2,"away":1},"halfTime":{"home":1,"away":1}},"referees":[]}
+]}
