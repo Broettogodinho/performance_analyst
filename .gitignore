@@ -1,6 +1,20 @@
+# Dados gerados localmente
 data/
-.env
+
+# Python
+.venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
+*.egg-info/
+
+# Segredos
+.env
+
+# Editor / SO
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
 ~$*.docx
