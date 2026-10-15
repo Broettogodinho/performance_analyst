@@ -1,103 +1,119 @@
-# Análise de Dados de Desempenho de Futebol com `soccerdata` e Power BI
+# ⚽ Performance Analyst
 
-## Descrição
-Este projeto tem como objetivo geral coletar, organizar e analisar dados completos de desempenho de times e jogadores das principais ligas de futebol (principalmente europeias) dos últimos anos, utilizando a biblioteca `soccerdata`. Os dados são preparados para análises e visualizações aprofundadas no Power BI, incluindo dados históricos, estatísticas por partidas e temporadas, para dar suporte a análises avançadas e geração de insights.
+[![testes](https://github.com/Broettogodinho/performance_analyst/actions/workflows/tests.yml/badge.svg)](https://github.com/Broettogodinho/performance_analyst/actions/workflows/tests.yml)
 
-## Funcionalidades Principais
-* **Coleta Abrangente de Dados:** Utiliza a biblioteca `soccerdata` para extrair informações de fontes como FBRef e SoFIFA.
-* **Dados Históricos e Atuais:** Coleta de estatísticas de times e jogadores desde a temporada 2010-2011 até as mais recentes (2025-2026, conforme o plano).
-* **Granularidade dos Dados:** Aquisição de dados em nível de temporada e por partida, tanto para times quanto para jogadores.
-* **Armazenamento Organizado:** Os dados coletados são salvos localmente em formato CSV, estruturados por ano, liga e time para fácil acesso.
-* **Preparação para BI:** Os dados são processados e padronizados para importação e modelagem no Power BI.
-* **Visualização Interativa:** Desenvolvimento de relatórios e dashboards no Power BI para análise de desempenho, com filtros por temporada, liga e diversas métricas.
-* **Automação (Planejado):** Implementação de scripts para coleta e atualização periódica e automatizada dos dados.
+Base de dados de futebol para **dashboards de desempenho**, **predição de jogos** e outros **modelos estatísticos**. Cobre Brasileirão, Big 5 europeias, Champions, Libertadores e outras ligas, usando só fontes gratuitas e permitidas.
 
-## Fontes de Dados
-A principal fonte de dados para este projeto é a biblioteca Python **`soccerdata`**, que facilita o acesso a dados de futebol de sites populares:
-* **FBRef:** Fornece estatísticas detalhadas de partidas, temporadas, times e jogadores.
-* **SoFIFA:** Oferece dados sobre atributos de jogadores, classificações de times e informações de versões do jogo FIFA.
+```
+football-data.co.uk ─┐
+football-data.org ───┼─► bronze (Parquet) ─► silver (partidas consolidadas) ─► gold (DuckDB + Parquet) ─► Power BI / modelos
+StatsBomb Open Data ─┤
+legado FBref ────────┘
+```
 
-O foco da coleta são as principais ligas europeias, incluindo a "Big 5 European Leagues Combined".
+## O que já existe (Fase 1)
 
-## Tecnologias Utilizadas
-* **Python 3.x**
-* **`soccerdata`**: Biblioteca central para coleta de dados.
-* **Pandas**: Para manipulação e análise dos DataFrames retornados pela `soccerdata`.
-* **CSV**: Formato de arquivo para armazenamento local dos dados coletados.
-* **Power BI**: Para modelagem de dados, criação de relatórios e dashboards interativos.
-* (Opcional, adicione outras bibliotecas que você usa, ex: `requests`, `json`, etc.)
+- **Coleta** de três fontes gratuitas e importação dos dados antigos do projeto. Detalhes e licenças em [`docs/FONTES.md`](docs/FONTES.md).
+- **Times casados entre fontes:** "CA Paranaense", "Athletico-PR" e "Athletico Paranaense" viram o mesmo `athletico-pr`. Isso vale por regras de normalização e por uma tabela de apelidos editável. Não há casamento "aproximado": o que não casar aparece num relatório para revisão.
+- **Partidas consolidadas:** cada jogo vira uma linha, combinando o melhor de cada fonte (rodada da football-data.org, odds da football-data.co.uk, xG da StatsBomb).
+- **Modelo estrela** pronto para BI:
+  - classificação;
+  - forma nos últimos 5 jogos;
+  - pontos acumulados;
+  - aproveitamento em casa e fora;
+  - probabilidades do mercado sem a margem da casa;
+  - **pontos esperados pelo mercado**, que diz se o time está acima ou abaixo do que as odds previam.
+- **Métricas avançadas do FBref** (xG, PSxG, passes progressivos…) da Big 5 de 2016-17 a 2024-25, preservadas do legado.
+- **Guia do Power BI**, com relacionamentos, medidas DAX e layout das páginas: [`docs/POWERBI.md`](docs/POWERBI.md).
 
-## Como Usar / Executar
+Próximas fases (predição com Elo e Dixon-Coles, xG próprio, simulação de temporada) em [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
-### Pré-requisitos
-* Python 3.8+
-* pip (gerenciador de pacotes Python)
-* Git (para clonar o repositório)
-* Power BI Desktop (para visualizar e editar os relatórios)
+## Instalação
 
-### Instalação
-1.  Clone o repositório:
-    ```bash
-    git clone [https://github.com/Broettogodinho/performance_analyst.git](https://github.com/Broettogodinho/performance_analyst.git)
-    cd PROJETO-ANALISE-DE-DADOS-DE-DESEMPENHO # Ou o nome da pasta raiz do seu projeto
-    ```
-2.  Crie e ative um ambiente virtual (recomendado):
-    ```bash
-    python -m venv .venv
-    ```
-    * No Windows:
-        ```bash
-        .venv\Scripts\activate
-        ```
-    * No Linux/macOS:
-        ```bash
-        source .venv/bin/activate
-        ```
-3.  Instale as dependências:
-    *(Bruno, é altamente recomendável criar um arquivo `requirements.txt` com as bibliotecas Python que você usa, como `soccerdata`, `pandas`, etc. Você pode gerá-lo com `pip freeze > requirements.txt` após instalar tudo no seu ambiente virtual).*
-    ```bash
-    pip install -r requirements.txt
-    ```
-    Se você ainda não tem um `requirements.txt`, no mínimo instale a `soccerdata`:
-    ```bash
-    pip install soccerdata pandas
-    ```
+```bash
+git clone https://github.com/Broettogodinho/performance_analyst.git
+cd performance_analyst
+python -m venv .venv
+.venv\Scripts\activate            # Windows  (Linux/macOS: source .venv/bin/activate)
+pip install -r requirements.txt
+copy .env.example .env            # e cole seu token da football-data.org  (Linux/macOS: cp)
+```
 
-### Executando as Coletas e Análises
-1.  **Scripts de Coleta:**
-    * Execute os scripts localizados na pasta `performance_analyst/scripts_coleta/` (ou onde você os colocou) para popular a pasta `performance_analyst/dados_coletados/`.
-    * Exemplo (adapte aos nomes dos seus scripts):
-        ```bash
-        python performance_analyst/scripts_coleta/coletar_dados_times.py
-        python performance_analyst/scripts_coleta/coletar_dados_jogadores.py
-        ```
-2.  **Power BI:**
-    * Abra o Power BI Desktop.
-    * Importe os dados dos arquivos CSV gerados.
-    * Desenvolva ou abra os relatórios e dashboards para análise. (Consulte o "Guia rápido para atualização dos dados e relatórios" mencionado nos seus entregáveis da Sprint 4).
+## Carga inicial
 
-## Plano de Sprints (Resumo)
+```bash
+python -m futstats importar-legado                                         # dados já coletados (legacy/)
+python -m futstats coletar fdcouk --desde 2015                             # resultados + odds, todas as ligas do catálogo
+python -m futstats coletar fdorg --comp BRA1 UCL ENG1 ESP1 --desde 2023    # rodada/fase (plano grátis: ~3 temporadas)
+python -m futstats coletar statsbomb --comp GER1 ESP1 WC EURO              # eventos e xG das temporadas abertas
+python -m futstats times                                                   # revisar nomes que não casaram
+python -m futstats construir                                               # monta data/futstats.duckdb e data/gold/*.parquet
+```
 
-* **Sprint 1: Preparação do ambiente e levantamento dos dados disponíveis**
-    * Configurar Python e `soccerdata`, explorar métodos da biblioteca, testar coletas básicas.
-* **Sprint 2: Coleta e armazenamento dos dados históricos por temporada**
-    * Coletar dados por temporada (2010-2026) das principais ligas, salvar em CSVs organizados.
-* **Sprint 3: Ampliação da coleta para estatísticas individuais e análises avançadas**
-    * Coletar dados detalhados de jogadores, integrar diferentes fontes, padronizar dados.
-* **Sprint 4: Preparação e integração dos dados no Power BI**
-    * Criar ETLs para Power BI, construir modelos de dados, desenvolver relatórios e dashboards.
-* **Sprint 5: Sazonalidade, automatização e monitoramento**
-    * Desenvolver catálogo sazonal, automatizar coleta e atualização, monitorar qualidade dos dados.
+Para atualizar durante a temporada, basta rodar de novo sem `--desde`: coleta só a temporada atual e reconstrói. Recoletar é idempotente, porque substitui a partição em vez de duplicar.
 
-## Contribuindo
-Contribuições são bem-vindas! Sinta-se à vontade para abrir *Issues* para reportar bugs, sugerir melhorias ou discutir novas funcionalidades. Pull Requests também são apreciados.
+Outros comandos:
+- `python -m futstats competicoes` lista o catálogo e as fontes de cada competição.
+- `python -m futstats times --todos` mostra todos os nomes e como foram resolvidos.
+
+### Times que não casaram
+
+Se `futstats times` listar um nome, por exemplo "Botafogo-SP" da fonte A que deveria ser o mesmo time de outra fonte, adicione uma linha ou um apelido em [`futstats/seeds/team_aliases.csv`](futstats/seeds/team_aliases.csv):
+
+```csv
+time_id,nome_exibicao,pais,aliases
+botafogo-sp,Botafogo-SP,Brasil,Botafogo SP|Botafogo FC SP
+```
+
+Depois rode `construir` de novo. Há um teste que impede o mesmo apelido de apontar para dois times.
+
+## Consultas rápidas (DuckDB)
+
+```python
+import duckdb
+con = duckdb.connect("data/futstats.duckdb", read_only=True)
+con.sql("""
+    SELECT posicao, t.nome_exibicao, jogos, pontos, aproveitamento_pct, pontos_esperados_mercado
+    FROM gold.classificacao c JOIN gold.dim_time t USING (time_id)
+    WHERE competicao_id = 'BRA1' AND temporada = '2024'
+    ORDER BY posicao
+""").show()
+```
+
+## Estrutura
+
+```
+futstats/
+├── config.py          # caminhos e catálogo de competições (ids por fonte)
+├── teams.py           # normalização de nomes de times
+├── schema.py          # esquema padrão de partidas
+├── http.py            # downloads com cache, retentativa e pausa
+├── storage.py         # bronze (Parquet particionado) e consolidação (silver)
+├── build.py           # monta gold no DuckDB e exporta Parquet
+├── sources/           # football_data_couk, football_data_org, statsbomb, legacy
+├── sql/gold.sql       # modelo estrela
+└── seeds/team_aliases.csv
+docs/                  # FONTES, POWERBI, ROADMAP
+legacy/                # código e dados da versão anterior (ver legacy/README.md)
+tests/                 # pytest com amostras de cada fonte
+data/                  # gerado localmente (não versionado)
+```
+
+## Testes
+
+```bash
+pytest -q
+```
+
+## Créditos e licenças de dados
+
+- Resultados e odds: [football-data.co.uk](https://www.football-data.co.uk)
+- Partidas: [football-data.org](https://www.football-data.org)
+- Eventos e xG: **Data provided by [StatsBomb](https://github.com/statsbomb/open-data)**. A atribuição é obrigatória em qualquer publicação.
+- Legado: FBref / Sports Reference (dados coletados antes de jan/2026)
 
 ## Autor
-* **Bruno Broetto Godinho**
-* GitHub: [@Broettogodinho](https://github.com/Broettogodinho)
-* https://www.linkedin.com/in/bruno-broetto-godinho/
 
-## Licença
-Este projeto está licenciado sob os termos da **Apache License, Version 2.0**.
+**Bruno Broetto Godinho** · [GitHub](https://github.com/Broettogodinho) · [LinkedIn](https://www.linkedin.com/in/bruno-broetto-godinho/)
 
-Para ver o texto completo da licença, consulte o arquivo [LICENSE] neste repositório.
+Licença: Apache 2.0 (código). Os dados seguem as condições de cada fonte.
